@@ -219,3 +219,12 @@ __marimo__/
 .streamlit/secrets.toml
 
 .pytest_cache
+
+# Generated data
+data/raw/*
+data/processed/*
+
+# Keep directory structure
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/eval/.gitkeep
