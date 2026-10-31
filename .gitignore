@@ -228,3 +228,5 @@ data/processed/*
 !data/raw/.gitkeep
 !data/processed/.gitkeep
 !data/eval/.gitkeep
+
+.metadata/
