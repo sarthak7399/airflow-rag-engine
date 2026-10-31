@@ -238,7 +238,7 @@ airflow-rag-engine/
 │   └── evaluate.py
 │
 ├── src/
-│   └── airflow_rag/
+│   └── airflow-rag-engine/
 │       ├── __init__.py
 │       │
 │       ├── ingestion/
@@ -897,7 +897,7 @@ airflow-rag-engine/
 ├── scripts/
 │
 ├── src/
-│   └── airflow_rag/
+│   └── airflow_rag_engine/
 │
 ├── tests/
 │
