@@ -529,6 +529,34 @@ The objective is to understand **how to engineer, evaluate, and operate the syst
 
 ---
 
+## Local Models
+
+### Embeddings: BAAI/bge-small-en-v1.5
+
+The embedding model is loaded via `sentence-transformers` and downloaded on first use from Hugging Face.
+
+- First run downloads weights into the Hugging Face cache:
+  - Linux/macOS: `~/.cache/huggingface/hub/`
+  - Windows: `%USERPROFILE%\.cache\huggingface\hub\`
+- Subsequent runs use the cached weights (offline-capable).
+- Set `HF_TOKEN` in `.env` for higher rate limits / private access.
+
+To pre-download manually:
+
+```bash
+uv run python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('BAAI/bge-small-en-v1.5')"
+```
+
+### LLM: Qwen2.5-7B-Instruct (via Ollama)
+
+Pulled and run locally with Ollama:
+
+```bash
+ollama pull qwen2.5:7b-instruct
+```
+
+---
+
 ## Environment Setup
 
 This project uses [`uv`](https://docs.astral.sh/uv/) as the primary Python environment and dependency manager.
