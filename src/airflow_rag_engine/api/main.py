@@ -1,6 +1,5 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-
 from qdrant_client import QdrantClient
 
 from airflow_rag_engine.generation.llm import generate

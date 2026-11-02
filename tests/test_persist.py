@@ -2,7 +2,11 @@ from pathlib import Path
 
 import pandas as pd
 
-from airflow_rag_engine.ingestion.persist import chunks_to_dataframe, save_parquet, load_chunks_parquet
+from airflow_rag_engine.ingestion.persist import (
+    chunks_to_dataframe,
+    load_chunks_parquet,
+    save_parquet,
+)
 from airflow_rag_engine.models import Chunk
 
 

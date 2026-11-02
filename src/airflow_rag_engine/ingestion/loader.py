@@ -1,7 +1,6 @@
 import hashlib
 import re
 from pathlib import Path
-from typing import Any
 
 import httpx
 from bs4 import BeautifulSoup

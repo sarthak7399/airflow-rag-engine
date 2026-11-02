@@ -2,7 +2,6 @@ import argparse
 
 from qdrant_client import QdrantClient
 
-from airflow_rag_engine.embeddings.model import embed_query
 from airflow_rag_engine.retrieval.retriever import retrieve
 
 

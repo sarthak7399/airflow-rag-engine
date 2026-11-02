@@ -1,9 +1,13 @@
 import argparse
 from pathlib import Path
 
-from airflow_rag_engine.ingestion.loader import load_directory
 from airflow_rag_engine.ingestion.chunker import chunk_documents
-from airflow_rag_engine.ingestion.persist import chunks_to_dataframe, documents_to_dataframe, save_parquet
+from airflow_rag_engine.ingestion.loader import load_directory
+from airflow_rag_engine.ingestion.persist import (
+    chunks_to_dataframe,
+    documents_to_dataframe,
+    save_parquet,
+)
 from airflow_rag_engine.vectorstore.qdrant import get_client, index_chunks
 
 

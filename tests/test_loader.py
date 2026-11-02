@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from airflow_rag_engine.ingestion.loader import load_html_file, load_directory
+from airflow_rag_engine.ingestion.loader import load_directory, load_html_file
 
 
 def test_load_html_file(tmp_path: Path):
