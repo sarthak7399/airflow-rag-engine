@@ -14,8 +14,9 @@ def _first_available_model() -> str:
         models = resp.json().get("models", [])
         if models:
             return models[0]["name"]
-    except Exception:
-        pass
+    except Exception as e:  # noqa: BLE001
+        import logging
+        logging.getLogger(__name__).debug('ollama tags fetch failed: %s', e)
     return DEFAULT_MODEL
 
 
