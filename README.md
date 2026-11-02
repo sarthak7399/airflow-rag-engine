@@ -1107,6 +1107,40 @@ uv pip list
 The project environment is now ready for development.
 
 
+## Running the Application
+
+### Start infrastructure
+
+```bash
+docker compose up -d
+```
+
+### Download Airflow docs
+
+```bash
+uv run python scripts/download_docs.py
+```
+
+### Ingest
+
+```bash
+uv run python scripts/ingest.py --docs-dir data/raw/airflow-docs
+```
+
+### Retrieve (CLI)
+
+```bash
+uv run python scripts/retrieve.py "What is a DAG?"
+```
+
+### Serve API + UI
+
+```bash
+uv run uvicorn airflow_rag_engine.api.main:app --reload
+```
+
+Open `http://localhost:8000/` for the light web UI. API endpoints: `GET /health`, `POST /query`.
+
 ---
 
 ## License

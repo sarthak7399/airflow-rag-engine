@@ -11,12 +11,13 @@ def retrieve(
     score_threshold: float | None = None,
 ) -> list[dict]:
     vector = embed_query(query)
-    results = client.search(  # type: ignore[attr-defined]
+    response = client.query_points(
         collection_name=collection,
-        query_vector=vector,
+        query=vector,
         limit=top_k,
         score_threshold=score_threshold,
     )
+    results = response.points
     out = []
     for r in results:
         payload = r.payload or {}

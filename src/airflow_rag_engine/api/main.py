@@ -1,12 +1,21 @@
+from pathlib import Path
+
 from fastapi import FastAPI
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
+
 from qdrant_client import QdrantClient
 
 from airflow_rag_engine.generation.llm import generate
 from airflow_rag_engine.generation.prompt import build_prompt
 from airflow_rag_engine.retrieval.retriever import retrieve
 
+STATIC_DIR = Path(__file__).parent / "static"
+
 app = FastAPI(title="Airflow RAG Engine")
+
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 
 class QueryRequest(BaseModel):
@@ -17,6 +26,11 @@ class QueryRequest(BaseModel):
 class QueryResponse(BaseModel):
     answer: str
     contexts: list[str]
+
+
+@app.get("/")
+def index():
+    return FileResponse(STATIC_DIR / "index.html")
 
 
 @app.get("/health")

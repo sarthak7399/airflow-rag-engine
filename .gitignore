@@ -230,3 +230,4 @@ data/processed/*
 !data/eval/.gitkeep
 
 .metadata/
+.kilo/
