@@ -156,6 +156,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+airflowRagEngineENV/
 
 # Spyder project settings
 .spyderproject
@@ -216,3 +217,17 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+.pytest_cache
+
+# Generated data
+data/raw/*
+data/processed/*
+
+# Keep directory structure
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/eval/.gitkeep
+
+.metadata/
+.kilo/

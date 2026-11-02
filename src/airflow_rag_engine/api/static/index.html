@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Airflow RAG Engine</title>
+<style>
+  :root { --bg:#f5f7fb; --card:#ffffff; --accent:#2563eb; --accent2:#7c3aed; --text:#1f2937; --muted:#6b7280; --border:#e5e7eb; --ok:#10b981; --warn:#f59e0b; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,Segoe UI,Roboto,sans-serif; background:linear-gradient(135deg,#eef2ff,#f5f7fb); color:var(--text); min-height:100vh; }
+  .wrap { max-width:980px; margin:40px auto; padding:0 20px; }
+  h1 { font-size:30px; margin:0; background:linear-gradient(90deg,var(--accent),var(--accent2)); -webkit-background-clip:text; background-clip:text; color:transparent; animation:fadein .8s ease; }
+  .sub { color:var(--muted); margin:6px 0 28px; animation:fadein 1s ease; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:22px; box-shadow:0 8px 24px rgba(0,0,0,.06); margin-bottom:20px; animation:slideup .6s ease; }
+  .row { display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
+  button { background:linear-gradient(90deg,var(--accent),var(--accent2)); color:#fff; border:none; border-radius:10px; padding:10px 16px; font-size:14px; cursor:pointer; transition:transform .15s, box-shadow .15s; }
+  button:hover { transform:translateY(-2px); box-shadow:0 6px 14px rgba(37,99,235,.3); }
+  button:disabled { opacity:.6; cursor:not-allowed; transform:none; }
+  textarea { width:100%; border:1px solid var(--border); border-radius:10px; padding:12px; font-size:15px; resize:vertical; min-height:90px; transition:border .2s; }
+  textarea:focus { outline:none; border-color:var(--accent); }
+  .status { display:inline-flex; align-items:center; gap:8px; padding:6px 12px; border-radius:999px; background:#eef2ff; color:var(--accent); font-size:13px; font-weight:600; }
+  .dot { width:8px; height:8px; border-radius:50%; background:var(--accent); animation:pulse 1.2s infinite; }
+  .step { display:flex; align-items:center; gap:10px; padding:10px 12px; border:1px solid var(--border); border-radius:10px; margin-bottom:8px; transition:all .3s; }
+  .step.active { border-color:var(--accent); background:#eef2ff; }
+  .step.done { border-color:var(--ok); background:#ecfdf5; }
+  .badge { font-size:11px; padding:2px 8px; border-radius:999px; background:#e5e7eb; color:var(--muted); }
+  .answer { white-space:pre-wrap; line-height:1.7; margin-top:14px; padding:14px; background:#f9fafb; border-radius:10px; border:1px solid var(--border); animation:fadein .4s; }
+  .ctx-item { border-top:1px solid var(--border); padding:10px 0; font-size:13px; color:var(--muted); animation:slideup .4s; }
+  .score { color:var(--accent); font-weight:600; }
+  .log { font-family:monospace; font-size:12px; background:#0f172a; color:#e2e8f0; padding:12px; border-radius:10px; max-height:200px; overflow:auto; white-space:pre-wrap; margin-top:10px; }
+  @keyframes fadein { from{opacity:0} to{opacity:1} }
+  @keyframes slideup { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Airflow RAG Engine</h1>
+  <div class="sub">Self-hosted RAG over Apache Airflow docs — retrieval quality, evaluation, production-oriented.</div>
+
+  <div class="card">
+    <h3>Pipeline</h3>
+    <div class="step" id="s1"><span class="badge">1</span> Download Airflow docs <button onclick="run('download')">Run</button></div>
+    <div class="step" id="s2"><span class="badge">2</span> Ingest & index chunks <button onclick="run('ingest')">Run</button></div>
+    <div class="status" id="status"><span class="dot"></span><span id="msg">Ready</span></div>
+    <div id="log" class="log" style="display:none"></div>
+  </div>
+
+  <div class="card">
+    <h3>Ask</h3>
+    <textarea id="q" placeholder="e.g. What is a DAG?"></textarea>
+    <div class="row"><button id="btn" onclick="ask()">Ask</button></div>
+    <div id="answer" class="answer" style="display:none"></div>
+    <div id="ctx"></div>
+  </div>
+
+  <div class="card">
+    <h3>About</h3>
+    <p style="color:var(--muted);margin:0">Local-first stack: BGE-small-en-v1.5 embeddings, Qdrant vector DB, Ollama LLM, FastAPI. No proprietary APIs.</p>
+  </div>
+</div>
+<script>
+async function run(step){
+  const suffix = step==='download' ? 'download' : 'ingest';
+  await fetch('/run/'+suffix,{method:'POST'});
+  poll();
+}
+async function poll(){
+  const r=await fetch('/status'); const d=await r.json();
+  document.getElementById('msg').textContent=d.message;
+  document.getElementById('log').style.display='block';
+  document.getElementById('log').textContent=d.log||'';
+  if(d.running) setTimeout(poll,1000);
+}
+async function ask(){
+  const q=document.getElementById('q').value.trim();
+  if(!q) return;
+  const btn=document.getElementById('btn');
+  btn.disabled=true; btn.textContent='Thinking...';
+  document.getElementById('answer').style.display='none';
+  document.getElementById('ctx').innerHTML='';
+  try{
+    const r=await fetch('/query',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query:q,top_k:5})});
+    const d=await r.json();
+    const a=document.getElementById('answer');
+    a.style.display='block'; a.textContent=d.answer;
+    (d.contexts||[]).forEach((c)=>{
+      const div=document.createElement('div');
+      div.className='ctx-item';
+      div.textContent=c.slice(0,280)+'…';
+      document.getElementById('ctx').appendChild(div);
+    });
+  }catch(e){ const a=document.getElementById('answer'); a.style.display='block'; a.textContent='Error: '+e; }
+  btn.disabled=false; btn.textContent='Ask';
+}
+</script>
+</body>
+</html>
