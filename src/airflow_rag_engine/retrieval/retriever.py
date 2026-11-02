@@ -11,7 +11,7 @@ def retrieve(
     score_threshold: float | None = None,
 ) -> list[dict]:
     vector = embed_query(query)
-    results = client.search(
+    results = client.search(  # type: ignore[attr-defined]
         collection_name=collection,
         query_vector=vector,
         limit=top_k,

@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-import pandas as pd
+import pandas as pd  # type: ignore[import-untyped]
 
 from airflow_rag_engine.models import Chunk, Document
 

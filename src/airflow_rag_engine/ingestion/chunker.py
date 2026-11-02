@@ -7,7 +7,7 @@ from airflow_rag_engine.models import Chunk
 def _split_sections(content: str) -> list[tuple[list[str], str]]:
     """Split markdown into (section_path, text) blocks by headings."""
     lines = content.splitlines()
-    sections: list[tuple[list[str], list[str]]] = []
+    sections: list[tuple[list[str], str]] = []
     path: list[str] = []
     buf: list[str] = []
 
